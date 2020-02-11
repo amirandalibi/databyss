@@ -1,4 +1,4 @@
-import { Block } from 'slate'
+// import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
 
