@@ -1,346 +1,96 @@
-// import React from 'react'
-// import { KeyUtils, Block, Editor, Value } from 'slate'
-// import ObjectId from 'bson-objectid'
-// import { RawHtml, View } from '@databyss-org/ui/primitives'
-// import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
-// import { stateToSlate, getRangesFromBlock } from './markup'
-// import { isAtomicInlineType } from './page/reducer'
-// import { getRawHtmlForBlock, entities } from '../state/page/reducer'
-// import EditorInline from './../EditorInline'
+import React, { useState, useMemo, useCallback } from 'react'
+import { createEditor, Transforms, Editor, Text } from 'slate'
 
-// KeyUtils.setGenerator(() => ObjectId().toHexString())
+export const entities = type =>
+  ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
-// export const toSlateJson = (editorState, pageBlocks) => ({
-//   document: {
-//     nodes: pageBlocks.map(block => {
-//       let nodes = []
-//       switch (block.type) {
-//         case 'ENTRY':
-//           nodes = stateToSlate(
-//             {
-//               [block.refId]: editorState.entries[block.refId],
-//             },
-//             block._id
-//           )
-//           break
-//         case 'LOCATION':
-//           nodes = stateToSlate(
-//             {
-//               [block.refId]: editorState.locations[block.refId],
-//             },
-//             block._id
-//           )
-//           nodes.type = 'LOCATION'
+export const stateToSlate = initState => {
+  const _blocks = initState.page.blocks
+  const _state = _blocks.map(b => {
+    const _block = initState.blocks[b._id]
+    const _text = initState[entities(_block.type)][_block.refId].textValue
+    return { type: _block.type, children: [{ text: _text }] }
+  })
+  return _state
+}
 
-//           break
-//         default:
-//           break
-//       }
+export const Element = ({ attributes, children, element }) => {
+  switch (element.type) {
+    case 'block-quote':
+      return <blockquote {...attributes}>{children}</blockquote>
+    case 'bulleted-list':
+      return <ul {...attributes}>{children}</ul>
+    case 'heading-one':
+      return <h1 {...attributes}>{children}</h1>
+    case 'heading-two':
+      return <h2 {...attributes}>{children}</h2>
+    case 'list-item':
+      return <li {...attributes}>{children}</li>
+    case 'numbered-list':
+      return <ol {...attributes}>{children}</ol>
+    default:
+      return <p {...attributes}>{children}</p>
+  }
+}
 
-//       // append data information to non atomic blocks
-//       if (!isAtomicInlineType(block.type)) {
-//         nodes.data = { refId: block.refId, type: 'ENTRY' }
-//       }
+export const Leaf = ({ attributes, children, leaf }) => {
+  if (leaf.bold) {
+    children = <strong>{children}</strong>
+  }
 
-//       let textBlock
-//       if (isAtomicInlineType(block.type)) {
-//         const nodeWithRanges = stateToSlate({
-//           [block.refId]: entities(editorState, block.type)[block.refId],
-//         }).nodes
+  if (leaf.code) {
+    children = <code>{children}</code>
+  }
 
-//         const _block = Block.fromJSON({
-//           object: 'block',
-//           type: block.type,
-//           nodes: nodeWithRanges,
-//         })
+  if (leaf.italic) {
+    children = <em>{children}</em>
+  }
 
-//         const _innerHtml = serializeNodeToHtml(_block)
+  if (leaf.underline) {
+    children = <u>{children}</u>
+  }
 
-//         textBlock = isAtomicInlineType(block.type)
-//           ? {
-//               object: 'inline',
-//               nodes: [
-//                 {
-//                   object: 'text',
-//                   text: sanitizer(_innerHtml),
-//                 },
-//               ],
-//               type: block.type,
-//             }
-//           : {
-//               object: 'text',
-//               text: getRawHtmlForBlock(editorState, block),
-//             }
-//       }
-//       // this will return generic node
-//       return !isAtomicInlineType(block.type)
-//         ? nodes
-//         : {
-//             object: 'block',
-//             data: { refId: block.refId, type: block.type },
-//             key: block._id,
-//             type: block.type,
-//             nodes: [textBlock],
-//           }
-//     }),
-//   },
-// })
+  return <span {...attributes}>{children}</span>
+}
 
-// export const hasSelection = value => {
-//   const { selection } = value
-//   if (!(selection.isBlurred || selection.isCollapsed)) {
-//     return true
-//   }
-//   return false
-// }
+const toggleBlock = (editor, format) => {
+  const isActive = isBlockActive(editor, format)
+  const isList = LIST_TYPES.includes(format)
 
-// export const renderInline = onEdit => ({ node, attributes }, editor, next) => {
-//   const isSelected =
-//     editor.value.selection.focus.isInNode(node) && !hasSelection(editor.value)
+  Transforms.unwrapNodes(editor, {
+    match: n => LIST_TYPES.includes(n.type),
+    split: true,
+  })
 
-//   if (isAtomicInlineType(node.type)) {
-//     return (
-//       <EditorInline
-//         editor={editor}
-//         isSelected={isSelected}
-//         node={node}
-//         onEdit={onEdit}
-//       >
-//         <RawHtml _html={{ __html: node.text }} {...attributes} />
-//       </EditorInline>
-//     )
-//   }
+  Transforms.setNodes(editor, {
+    type: isActive ? 'paragraph' : isList ? 'list-item' : format,
+  })
 
-//   return next()
-// }
+  if (!isActive && isList) {
+    const block = { type: format, children: [] }
+    Transforms.wrapNodes(editor, block)
+  }
+}
 
-// export const renderMark = (props, editor, next) => {
-//   const { children, mark, attributes } = props
-//   switch (mark.type) {
-//     case 'bold':
-//       return <strong {...attributes}>{children}</strong>
-//     case 'italic':
-//       return <i {...attributes}>{children}</i>
-//     case 'location':
-//       if (editor.value.anchorBlock.type !== 'LOCATION') {
-//         return (
-//           <View
-//             {...attributes}
-//             borderBottom="1px dashed"
-//             borderColor="text.4"
-//             display="inline"
-//             borderRadius={0}
-//           >
-//             {children}
-//           </View>
-//         )
-//       }
-//       return next()
-//     default:
-//       return next()
-//   }
-// }
+export const toggleMark = (editor, format) => {
+  const isActive = isMarkActive(editor, format)
 
-// // checks if the selection has the anchor before the focus
-// //  if it was selected with the range going forward or backwards
-// export const isSelectionReversed = value => {
-//   const { selection, fragment, document } = value
-//   if (
-//     !selection.focus.isInNode(
-//       document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
-//     )
-//   ) {
-//     return true
-//   }
-//   return false
-// }
+  if (isActive) {
+    Editor.removeMark(editor, format)
+  } else {
+    Editor.addMark(editor, format, true)
+  }
+}
 
-// export const getBlockRanges = block => {
-//   const jsonBlockValue = { ...block.toJSON(), key: block.key }
-//   const ranges = getRangesFromBlock(jsonBlockValue).ranges
-//   return ranges
-// }
+const isMarkActive = (editor, format) => {
+  const marks = Editor.marks(editor)
+  return marks ? marks[format] === true : false
+}
 
-// // Takes a selection and normalizes it to the document (getRootBlocksAtRange)
-// // checks the first and last block to see if its contained in the selection, sometimes the selection will include previous and last block despite not having text in the selection
-// export const getSelectedBlocks = value => {
-//   const { selection, fragment, document } = value
-//   let _fragmentNodes = fragment.nodes
+const isBlockActive = (editor, format) => {
+  const [match] = Editor.nodes(editor, {
+    match: n => n.type === format,
+  })
 
-//   // first or last block sometimes appear as orphan keys in our data structure
-//   //  selection needs to be normalized
-//   let _nodeList = document.getRootBlocksAtRange(selection)
-//   // if fragment selection spans multiple block
-//   if (_nodeList.size > 1) {
-//     // reverse if needed
-//     if (isSelectionReversed(value)) {
-//       _fragmentNodes = _fragmentNodes.reverse()
-//       _nodeList = _nodeList.reverse()
-//     }
-
-//     const _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
-//     const _lastNode = _nodeList.get(_nodeList.size - 1)
-
-//     const _firstNodeFragment = _fragmentNodes.get(0).text
-//     const _firstNode = _nodeList.get(0)
-
-//     // if first block selection is not equal to first block
-//     // remove block from list
-//     if (_firstNode.text !== _firstNodeFragment) {
-//       _nodeList = _nodeList.delete(0)
-//     }
-
-//     // if last block selection is not equal to last block
-//     // remove block from list
-//     if (_lastNode.text !== _lastNodeFragment) {
-//       _nodeList = _nodeList.delete(_nodeList.size - 1)
-//     }
-
-//     // check if reversed
-//     if (isSelectionReversed(value)) {
-//       _nodeList = _nodeList.reverse()
-//     }
-
-//     return _nodeList
-//   }
-//   return _nodeList
-// }
-
-// // https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
-// export const singleBlockBackspaceCheck = value => {
-//   const _selectedBlocks = getSelectedBlocks(value)
-//   if (
-//     _selectedBlocks.size === 1 &&
-//     !isAtomicInlineType(_selectedBlocks.get(0)) &&
-//     _selectedBlocks.get(0).text.length === 0
-//   ) {
-//     return true
-//   }
-//   return false
-// }
-
-// export const noAtomicInSelection = value => {
-//   const _nodeList = getSelectedBlocks(value)
-
-//   const isNotAtomicInFragment =
-//     _nodeList.filter(block => isAtomicInlineType(block.type)).size === 0
-
-//   return isNotAtomicInFragment
-// }
-
-// export const isActiveSelection = value => {
-//   const { fragment, selection } = value
-
-//   // returns a boolean if both anchor and focus do not contain atomic block
-//   const isNotAtomic = noAtomicInSelection(value)
-
-//   if (
-//     selection.isBlurred ||
-//     selection.isCollapsed ||
-//     fragment.text === '' ||
-//     !isNotAtomic
-//   ) {
-//     return false
-//   }
-//   return true
-// }
-
-// export const isBlockEmpty = (id, editor) => {
-//   if (hasSelection(editor.value)) {
-//     return true
-//   }
-//   const _node = editor.value.document.getNode(id)
-
-//   if (_node) {
-//     if (
-//       _node.text.length === 0 &&
-//       editor.value.activeMarks.size === 0 &&
-//       _node.type === 'ENTRY'
-//     ) {
-//       return true
-//     }
-//     return false
-//   }
-//   return true
-// }
-
-// export const isTextAtomic = text => {
-//   if (text.trim().match(/^@/) || text.trim().match(/^#/)) {
-//     return true
-//   }
-//   return false
-// }
-
-// export const isEmptyAndAtomic = text => {
-//   if (isTextAtomic(text) && text.trim().length === 1) {
-//     return true
-//   }
-//   return false
-// }
-
-// export const editorInstance = () => {
-//   const _value = Value.fromJSON({
-//     document: {
-//       nodes: [
-//         {
-//           object: 'block',
-//           type: 'ENTRY',
-//           nodes: [
-//             {
-//               object: 'text',
-//               text: '',
-//             },
-//           ],
-//         },
-//       ],
-//     },
-//   })
-//   const _editor = new Editor({ value: _value })
-//   return _editor
-// }
-
-// export const newAtomicBlock = (id, type, text, marks) => {
-//   const _block = Block.fromJSON({
-//     object: 'block',
-//     type,
-//     key: id,
-//     data: {},
-//     nodes: [
-//       {
-//         object: 'text',
-//         text: '',
-//         marks: [],
-//       },
-//       {
-//         object: 'inline',
-//         type,
-//         data: {},
-//         nodes: [
-//           {
-//             object: 'text',
-//             text: sanitizer(text),
-//             marks,
-//           },
-//         ],
-//       },
-//       {
-//         object: 'text',
-//         text: '',
-//         marks: [],
-//       },
-//     ],
-//   })
-//   return _block
-// }
-
-// export const isInlineAtomicSelected = ({ value }) => {
-//   if (
-//     value.selection.focus.isInNode(value.anchorBlock) &&
-//     isAtomicInlineType(value.anchorBlock.type) &&
-//     !value.selection.focus.isAtStartOfNode(value.anchorBlock) &&
-//     !value.selection.focus.isAtEndOfNode(value.anchorBlock)
-//   ) {
-//     return true
-//   }
-//   return false
-// }
+  return !!match
+}
