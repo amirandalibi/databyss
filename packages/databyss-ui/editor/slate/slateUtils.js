@@ -23,14 +23,13 @@ export const stateToSlate = initState => {
     const _block = initState.blocks[b._id]
     const _text = initState[entities(_block.type)][_block.refId].textValue
 
-    const _children =
-      _block.type === 'SOURCE'
-        ? [
-            { text: '' },
-            { character: _text, type: 'SOURCE', children: [{ text: '' }] },
-            { text: '' },
-          ]
-        : [{ text: _text }]
+    const _children = isAtomicInlineType(_block.type)
+      ? [
+          { text: '' },
+          { character: _text, type: _block.type, children: [{ text: '' }] },
+          { text: '' },
+        ]
+      : [{ text: _text }]
     const _data = {
       children: _children,
     }
@@ -39,8 +38,11 @@ export const stateToSlate = initState => {
   return _state
 }
 
+export const getAtomicStyle = type =>
+  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
+
 export const Element = ({ attributes, children, element }) => {
-  const _Element = (text, child) => (
+  const _Element = (text, child, type) => (
     <View
       display="inline-block"
       contentEditable="false"
@@ -49,14 +51,15 @@ export const Element = ({ attributes, children, element }) => {
       css={{ userSelect: 'none' }}
       overflow="visible"
     >
-      <Text display="inline" variant="bodyHeaderUnderline" type="p">
+      <Text display="inline" variant={getAtomicStyle(type)} type="p">
         {text}
       </Text>
       {child}
     </View>
   )
+
   if (isAtomicInlineType(element.type)) {
-    return _Element(element.character, children)
+    return _Element(element.character, children, element.type)
   }
 
   return <p {...attributes}>{children}</p>
@@ -65,10 +68,6 @@ export const Element = ({ attributes, children, element }) => {
 export const Leaf = ({ attributes, children, leaf }) => {
   if (leaf.bold) {
     children = <strong>{children}</strong>
-  }
-
-  if (leaf.code) {
-    children = <code>{children}</code>
   }
 
   if (leaf.italic) {
