@@ -1,7 +1,18 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { createEditor, Transforms, Editor } from 'slate'
-import { View, RawHtml } from '@databyss-org/ui/primitives'
+import { View, RawHtml, Text } from '@databyss-org/ui/primitives'
 import EditorInline from './../EditorInline'
+
+export const isAtomicInlineType = type => {
+  switch (type) {
+    case 'SOURCE':
+      return true
+    case 'TOPIC':
+      return true
+    default:
+      return false
+  }
+}
 
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
@@ -29,21 +40,26 @@ export const stateToSlate = initState => {
 }
 
 export const Element = ({ attributes, children, element }) => {
-  switch (element.type) {
-    case 'SOURCE':
-      return (
-        <EditorInline>
-          <RawHtml _html={{ __html: element.character }} {...attributes} />
-          {children}
-        </EditorInline>
-        // <EditorInline {...attributes}>
-        //   {element.character}
-        //   {children}
-        // </EditorInline>
-      )
-    default:
-      return <p {...attributes}>{children}</p>
+  const _Element = (text, child) => (
+    <View
+      display="inline-block"
+      contentEditable="false"
+      type="text"
+      suppressContentEditableWarning
+      css={{ userSelect: 'none' }}
+      overflow="visible"
+    >
+      <Text display="inline" variant="bodyHeaderUnderline" type="p">
+        {text}
+      </Text>
+      {child}
+    </View>
+  )
+  if (isAtomicInlineType(element.type)) {
+    return _Element(element.character, children)
   }
+
+  return <p {...attributes}>{children}</p>
 }
 
 export const Leaf = ({ attributes, children, leaf }) => {

@@ -31,11 +31,28 @@ const Styled = styled(
   )
 )
 
-const Text = ({ children, color, ...others }) => (
-  <Styled variant="bodyNormal" color={color} {...others}>
-    {children}
-  </Styled>
+const StyledP = styled(
+  {
+    ios: 'Text',
+    android: 'Text',
+    default: 'span',
+  },
+  compose(
+    variants,
+    color,
+    typography,
+    space
+  )
 )
+
+const Text = ({ children, color, type, ...others }) => {
+  const _Styled = type === 'p' ? StyledP : Styled
+  return (
+    <_Styled variant="bodyNormal" color={color} {...others}>
+      {children}
+    </_Styled>
+  )
+}
 
 Text.defaultProps = {
   color: 'text.0',
