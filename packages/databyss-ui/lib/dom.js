@@ -144,3 +144,6 @@ export const inKeyWhitelist = e => {
 
 export const IS_LINUX =
   window.navigator.platform.toLowerCase().search('linux') > -1
+
+export const IS_MAC = /(Mac|iPhone|iPod|iPad)/i.test(navigator.platform)
+export const IS_IOS = /(iPhone|iPod|iPad)/i.test(navigator.platform)

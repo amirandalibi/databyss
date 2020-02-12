@@ -3,11 +3,26 @@ import { createEditor, Transforms, Editor, Text } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import initialState from './../../state/__tests__/initialState.js'
 import { stateToSlate, Leaf, Element, toggleMark } from './../slateUtils'
+import hotKeys from './../hotKeys'
+import { withHistory } from 'slate-history'
 
 import _ContentEditable from './_ContentEditable.js'
 
 const ContentEditable = () => {
-  const editor = useMemo(() => withReact(createEditor()), [])
+  const withInline = editor => {
+    const { isInline, isVoid } = editor
+    editor.isInline = element => {
+      return element.type === 'SOURCE' ? true : isInline(element)
+    }
+    editor.isVoid = element => {
+      return element.type === 'SOURCE' ? true : isVoid(element)
+    }
+    return editor
+  }
+
+  const editor = useMemo(() => withInline(withReact(createEditor())), [])
+  //   const editor = useMemo(() => withReact(createEditor()), [])
+
   const [value, setValue] = useState(stateToSlate(initialState))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
@@ -17,15 +32,17 @@ const ContentEditable = () => {
   }, [])
 
   const onKeyDown = event => {
-    if (!event.ctrlKey) {
-      return
+    if (hotKeys.isBold(event)) {
+      event.preventDefault()
+      toggleMark(editor, 'bold')
     }
-    switch (event.key) {
-      case 'b': {
-        event.preventDefault()
-        toggleMark(editor, 'bold')
-        break
-      }
+    if (hotKeys.isItalic(event)) {
+      event.preventDefault()
+      toggleMark(editor, 'italic')
+    }
+    if (hotKeys.isLocation(event)) {
+      event.preventDefault()
+      toggleMark(editor, 'location')
     }
   }
 
@@ -49,4 +66,3 @@ export default ContentEditable
 // dont pass through reducer
 // get initial state
 // start adding event lister
-//
