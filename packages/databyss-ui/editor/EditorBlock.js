@@ -172,11 +172,7 @@ export const Element = ({ attributes, children, element }) => {
             ml="tinyNegative"
             backgroundColor={isSelected ? 'background.3' : ''}
           >
-            <Text
-              display="inline"
-              variant={getAtomicStyle(element.type)}
-              type="p"
-            >
+            <Text display="inline" variant={getAtomicStyle(element.type)}>
               <RawHtml _html={{ __html: element.character }} {...attributes} />
             </Text>
             {children}
@@ -196,7 +192,7 @@ export const Element = ({ attributes, children, element }) => {
             )}
           </Span>
         ) : (
-          <div {...attributes}>{children}</div>
+          <Text {...attributes}>{children}</Text>
         )}
       </Span>
     )

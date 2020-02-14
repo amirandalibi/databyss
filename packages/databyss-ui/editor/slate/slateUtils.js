@@ -95,7 +95,6 @@ export const Leaf = ({ attributes, children, leaf }) => {
     children = (
       <View
         {...attributes}
-        type="text"
         borderBottom="1px dashed"
         borderColor="text.4"
         display="inline"

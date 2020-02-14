@@ -113,16 +113,7 @@ const Styled = styled(
   styleProps
 )
 
-const Text = styled(
-  {
-    ios: 'View',
-    android: 'View',
-    default: 'span',
-  },
-  styleProps
-)
-
-const View = forwardRef(({ children, onLayout, type, ...others }, ref) => {
+const View = forwardRef(({ children, onLayout, ...others }, ref) => {
   const viewRef = useRef(null)
   const clientRect = {}
   const _onLayout = useCallback(
@@ -163,17 +154,15 @@ const View = forwardRef(({ children, onLayout, type, ...others }, ref) => {
     }
   })
 
-  const StyledDiv = type === 'text' ? Text : Styled
-
   const view = (
-    <StyledDiv
+    <Styled
       ref={forkRef(viewRef, ref)}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
     >
       {children}
-    </StyledDiv>
+    </Styled>
   )
 
   if (others.theme) {

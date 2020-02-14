@@ -1,5 +1,12 @@
 import React from 'react'
-import { variant, color, typography, compose, space } from 'styled-system'
+import {
+  variant,
+  color,
+  typography,
+  compose,
+  space,
+  layout,
+} from 'styled-system'
 import styled from '../styled'
 
 export const variants = variant({
@@ -14,7 +21,8 @@ export const variants = variant({
 export const styleProps = compose(
   variants,
   color,
-  typography
+  typography,
+  layout
 )
 
 const Styled = styled(
@@ -27,30 +35,16 @@ const Styled = styled(
     variants,
     color,
     typography,
-    space
+    space,
+    layout
   )
 )
 
-const StyledP = styled(
-  {
-    ios: 'Text',
-    android: 'Text',
-    default: 'span',
-  },
-  compose(
-    variants,
-    color,
-    typography,
-    space
-  )
-)
-
-const Text = ({ children, color, type, ...others }) => {
-  const _Styled = type === 'p' ? StyledP : Styled
+const Text = ({ children, color, ...others }) => {
   return (
-    <_Styled variant="bodyNormal" color={color} {...others}>
+    <Styled variant="bodyNormal" color={color} {...others}>
       {children}
-    </_Styled>
+    </Styled>
   )
 }
 
