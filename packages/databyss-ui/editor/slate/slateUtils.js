@@ -106,7 +106,11 @@ export const Leaf = ({ attributes, children, leaf }) => {
     )
   }
 
-  return <span {...attributes}>{children}</span>
+  return (
+    <View display="inline" {...attributes}>
+      {children}
+    </View>
+  )
 }
 
 const toggleBlock = (editor, format) => {

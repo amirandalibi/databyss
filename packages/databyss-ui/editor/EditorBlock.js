@@ -122,7 +122,7 @@
 //   <EditorBlock node={node}>{children}</EditorBlock>
 // )
 
-import { RawHtml, Text, Button, Icon } from '@databyss-org/ui/primitives'
+import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import fonts from '@databyss-org/ui/theming/fonts'
 import styled from '@emotion/styled'
 import { color, border, space, typography } from 'styled-system'
@@ -196,7 +196,7 @@ export const Element = ({ attributes, children, element }) => {
             )}
           </Span>
         ) : (
-          <p {...attributes}>{children}</p>
+          <div {...attributes}>{children}</div>
         )}
       </Span>
     )

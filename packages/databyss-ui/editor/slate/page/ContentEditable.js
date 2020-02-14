@@ -50,8 +50,6 @@ const ContentEditable = () => {
     }
   }
 
-  console.log(editor)
-
   return (
     <Slate editor={editor} value={value} onChange={value => setValue(value)}>
       <Editable
