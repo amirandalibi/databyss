@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { createEditor, Transforms, Editor } from 'slate'
 import { View, RawHtml, Text } from '@databyss-org/ui/primitives'
-import EditorInline from './../EditorInline'
+import { stateToSlateMarkup } from './markup'
+
+import { serialize, atomicHTMLSerializer } from './inlineSerializer'
 
 export const isAtomicInlineType = type => {
   switch (type) {
@@ -17,19 +19,63 @@ export const isAtomicInlineType = type => {
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
+/*
+convert page state to a slate value
+*/
+
+// children: [
+//   {
+//     type: 'paragraph',
+//     children: [
+//       { text: 'An opening paragraph with a ' },
+//       {
+//         type: 'link',
+//         url: 'https://example.com',
+//         children: [{ text: 'link' }],
+//       },
+//       { text: ' in it.' },
+//     ],
+//   },
+//   {
+//     type: 'quote',
+//     children: [{ text: 'A wise quote.' }],
+//   },
+//   {
+//     type: 'paragraph',
+//     children: [{ text: 'A closing paragraph!' }],
+//   },
+// ],
+
 export const stateToSlate = initState => {
   const _blocks = initState.page.blocks
   const _state = _blocks.map(b => {
+    // get block ref and id
     const _block = initState.blocks[b._id]
     const _text = initState[entities(_block.type)][_block.refId].textValue
+    // get block text value and
+    const _blockData = initState[entities(_block.type)][_block.refId]
+    // convert state to apply markup values
+    let _childrenText = stateToSlateMarkup(_blockData)
+    const __childrenText = _childrenText[0].children.map(c => {
+      if (!c.type) {
+        return c
+      }
+      return { type: c.type, children: [{ text: c.text }] }
+    })
 
+    //  console.log(serialize({ children: __childrenText }))
+    // TODO: INNER HTML on atomic blocks
     const _children = isAtomicInlineType(_block.type)
       ? [
           { text: '' },
-          { character: _text, type: _block.type, children: [{ text: '' }] },
+          {
+            character: serialize({ children: __childrenText }),
+            type: _block.type,
+            children: [{ text: '' }],
+          },
           { text: '' },
         ]
-      : [{ text: _text }]
+      : _childrenText
     const _data = {
       children: _children,
     }
@@ -44,7 +90,7 @@ export const getAtomicStyle = type =>
 export const Element = ({ attributes, children, element }) => {
   const _Element = (text, child, type) => (
     <View
-      display="inline-block"
+      display="unset"
       contentEditable="false"
       type="text"
       suppressContentEditableWarning
@@ -52,7 +98,7 @@ export const Element = ({ attributes, children, element }) => {
       overflow="visible"
     >
       <Text display="inline" variant={getAtomicStyle(type)} type="p">
-        {text}
+        <RawHtml _html={{ __html: text }} {...attributes} />
       </Text>
       {child}
     </View>

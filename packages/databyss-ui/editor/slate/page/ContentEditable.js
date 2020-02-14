@@ -10,7 +10,6 @@ import {
   isAtomicInlineType,
 } from './../slateUtils'
 import hotKeys from './../hotKeys'
-import { withHistory } from 'slate-history'
 
 import _ContentEditable from './_ContentEditable.js'
 
@@ -50,6 +49,8 @@ const ContentEditable = () => {
       toggleMark(editor, 'location')
     }
   }
+
+  console.log(editor)
 
   return (
     <Slate editor={editor} value={value} onChange={value => setValue(value)}>
