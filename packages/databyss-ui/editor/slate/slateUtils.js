@@ -51,7 +51,7 @@ export const stateToSlate = initState => {
   const _state = _blocks.map(b => {
     // get block ref and id
     const _block = initState.blocks[b._id]
-    const _text = initState[entities(_block.type)][_block.refId].textValue
+    // const _text = initState[entities(_block.type)][_block.refId].textValue
     // get block text value and
     const _blockData = initState[entities(_block.type)][_block.refId]
     // convert state to apply markup values
@@ -63,8 +63,6 @@ export const stateToSlate = initState => {
       return { type: c.type, children: [{ text: c.text }] }
     })
 
-    //  console.log(serialize({ children: __childrenText }))
-    // TODO: INNER HTML on atomic blocks
     const _children = isAtomicInlineType(_block.type)
       ? [
           { text: '' },
@@ -82,33 +80,6 @@ export const stateToSlate = initState => {
     return _data
   })
   return _state
-}
-
-export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
-
-export const Element = ({ attributes, children, element }) => {
-  const _Element = (text, child, type) => (
-    <View
-      display="unset"
-      contentEditable="false"
-      type="text"
-      suppressContentEditableWarning
-      css={{ userSelect: 'none' }}
-      overflow="visible"
-    >
-      <Text display="inline" variant={getAtomicStyle(type)} type="p">
-        <RawHtml _html={{ __html: text }} {...attributes} />
-      </Text>
-      {child}
-    </View>
-  )
-
-  if (isAtomicInlineType(element.type)) {
-    return _Element(element.character, children, element.type)
-  }
-
-  return <p {...attributes}>{children}</p>
 }
 
 export const Leaf = ({ attributes, children, leaf }) => {

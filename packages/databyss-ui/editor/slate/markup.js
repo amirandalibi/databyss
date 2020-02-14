@@ -101,8 +101,31 @@
 //   return { ...document.nodes[0], type: 'TEXT' }
 // }
 
-import { createEditor, Transforms, Editor, Text, Range, Node } from 'slate'
+import { createEditor, Transforms, Text } from 'slate'
 
+/*
+receives block data:
+{
+  textValue: String
+  ranges: [
+    {
+      offset: Number, 
+      length: Number, 
+      marks: String
+    }
+  ]
+}
+
+responds slate children: 
+[
+  children: [
+    text: String,
+    [mark]: Boolean,
+    type: Mark
+  ]
+]
+
+*/
 export const stateToSlateMarkup = blockData => {
   // create empty value
   const _editor = createEditor()

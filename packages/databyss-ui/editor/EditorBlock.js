@@ -121,3 +121,86 @@
 // export const renderBlock = ({ node, children }) => (
 //   <EditorBlock node={node}>{children}</EditorBlock>
 // )
+
+import { RawHtml, Text, Button, Icon } from '@databyss-org/ui/primitives'
+import fonts from '@databyss-org/ui/theming/fonts'
+import styled from '@emotion/styled'
+import { color, border, space, typography } from 'styled-system'
+import PenSVG from '@databyss-org/ui/assets/pen.svg'
+
+import { isAtomicInlineType } from './slate/slateUtils'
+import { useSelected } from 'slate-react'
+
+const Span = styled('span')(
+  // { cursor: 'pointer' },
+  color,
+  border,
+  space,
+  typography
+)
+
+export const getAtomicStyle = type =>
+  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
+
+export const Element = ({ attributes, children, element }) => {
+  let isSelected = false
+
+  if (isAtomicInlineType(element.type)) {
+    isSelected = useSelected()
+  }
+
+  const onClick = () => {
+    console.log('LAUNCH MODAL')
+  }
+
+  const _Element = () => {
+    return (
+      <Span>
+        {isAtomicInlineType(element.type) ? (
+          <Span
+            flexWrap="nowrap"
+            display="inline-block"
+            contentEditable="false"
+            suppressContentEditableWarning
+            css={{ userSelect: 'none', cursor: 'pointer' }}
+            overflow="visible"
+            borderRadius={5}
+            onMouseDown={onClick}
+            fontSize={fonts.textVariants.bodyHeader.fontSize}
+            p="tiny"
+            pr="0"
+            ml="tinyNegative"
+            backgroundColor={isSelected ? 'background.3' : ''}
+          >
+            <Text
+              display="inline"
+              variant={getAtomicStyle(element.type)}
+              type="p"
+            >
+              <RawHtml _html={{ __html: element.character }} {...attributes} />
+            </Text>
+            {children}
+            {isSelected && (
+              <Span
+                borderLeft="1px solid"
+                borderColor="background.4"
+                ml="10px"
+                padding="1px"
+              >
+                <Button variant="editSource" data-test-atomic-edit="open">
+                  <Icon sizeVariant="tiny" color="background.5">
+                    <PenSVG />
+                  </Icon>
+                </Button>
+              </Span>
+            )}
+          </Span>
+        ) : (
+          <p {...attributes}>{children}</p>
+        )}
+      </Span>
+    )
+  }
+
+  return _Element(element.character, children, element.type)
+}

@@ -5,10 +5,10 @@ import initialState from './../../state/__tests__/initialState.js'
 import {
   stateToSlate,
   Leaf,
-  Element,
   toggleMark,
   isAtomicInlineType,
 } from './../slateUtils'
+import { Element } from './../../EditorBlock'
 import hotKeys from './../hotKeys'
 
 import _ContentEditable from './_ContentEditable.js'
