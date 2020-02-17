@@ -121,28 +121,33 @@
 // export const renderBlock = ({ node, children }) => (
 //   <EditorBlock node={node}>{children}</EditorBlock>
 // )
+import React, { useEffect, useState } from 'react'
 
 import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import EditorBlockMenu from './Menu/EditorBlockMenu'
 import fonts from '@databyss-org/ui/theming/fonts'
 import styled from '@emotion/styled'
-import { color, border, space, typography } from 'styled-system'
+import { color, border, space, typography, layout } from 'styled-system'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
+import { createEditor, Transforms, Editor, Node, Range } from 'slate'
 
 import { isAtomicInlineType } from './slate/slateUtils'
-import { useSelected } from 'slate-react'
+import { useSelected, ReactEditor, useEditor } from 'slate-react'
 
 const Span = styled('span')(
   // { cursor: 'pointer' },
   color,
   border,
   space,
-  typography
+  typography,
+  layout
 )
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 export const Element = ({ attributes, children, element }) => {
+  const editor = useEditor()
   let isSelected = false
 
   if (isAtomicInlineType(element.type)) {
@@ -153,9 +158,51 @@ export const Element = ({ attributes, children, element }) => {
     console.log('LAUNCH MODAL')
   }
 
+  const [showNewBlockMenu, setShowNewBlockMenu] = useState(false)
+
+  useEffect(
+    () => {
+      if (element.isBlock && editor.selection) {
+        /*
+        check to see if current block is empty
+        */
+        let _isEmptyAndActive = false
+        if (Range.isCollapsed(editor.selection)) {
+          const _path = editor.selection.anchor.path
+          const _currentPath = ReactEditor.findPath(editor, element)
+          if (_path[0] === _currentPath[0]) {
+            _isEmptyAndActive = true
+          }
+        }
+
+        const showButton =
+          element.isBlock &&
+          Node.string(element).length === 0 &&
+          element.children.length === 1 &&
+          _isEmptyAndActive
+        if (showButton != showNewBlockMenu) {
+          setShowNewBlockMenu(showButton)
+        }
+      }
+    },
+    [editor.selection, element]
+  )
+
   const _Element = () => {
     return (
       <Span>
+        {/* add sidebar button here */}
+        {element.isBlock && (
+          <View
+            position="relative"
+            contentEditable="false"
+            suppressContentEditableWarning
+            left="-30px"
+            top="0px"
+          >
+            <EditorBlockMenu element={element} showButton={showNewBlockMenu} />
+          </View>
+        )}
         {isAtomicInlineType(element.type) ? (
           <Span
             flexWrap="nowrap"
@@ -192,7 +239,8 @@ export const Element = ({ attributes, children, element }) => {
             )}
           </Span>
         ) : (
-          <Text {...attributes}>{children}</Text>
+          // TODO: CHANGE THIS TO VIEW WITHOUT SLATE ERRORS
+          <div {...attributes}>{children}</div>
         )}
       </Span>
     )

@@ -76,6 +76,7 @@ export const stateToSlate = initState => {
       : _childrenText
     const _data = {
       children: _children,
+      isBlock: true,
     }
     return _data
   })

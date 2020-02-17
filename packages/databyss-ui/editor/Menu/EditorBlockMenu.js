@@ -1,53 +1,61 @@
 import React, { useEffect } from 'react'
+import { useSelected } from 'slate-react'
+
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
 import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
+import { createEditor, Transforms, Editor, Node } from 'slate'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
 import { startTag, onShowMenuActions } from '../state/page/actions'
 
-const EditorBlockMenu = ({ node, hideCursor }) => {
-  const [editorState, dispatchEditor] = useEditorContext()
-  const {
-    activeBlockId,
-    showMenuActions,
-    editableState,
-    showFormatMenu,
-  } = editorState
-  let isVisible = false
-  if (node.key === activeBlockId && !showFormatMenu) {
-    isVisible = true
-  }
+const EditorBlockMenu = ({ node, hideCursor, element, showButton }) => {
+  console.log(showButton)
+  //  console.log(string)
+  // console.log(Node.string(element))
+  // const [editorState, dispatchEditor] = useEditorContext()
+  // const {
+  //   activeBlockId,
+  //   showMenuActions,
+  //   editableState,
+  //   showFormatMenu,
+  // } = editorState
+  // let isVisible = showButton
+  // if (node.key === activeBlockId && !showFormatMenu) {
+  //   isVisible = true
+  // }
+  let showMenuActions = false
 
   const { buttonVariants } = buttons
 
   const onShowActions = () => {
-    dispatchEditor(onShowMenuActions(!showMenuActions, editableState))
+    // dispatchEditor(onShowMenuActions(!showMenuActions, editableState))
   }
 
   const onMenuAction = (tag, e) => {
-    // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
-    // TODO: make this compatable with native
-    // prevent default is needed for any button that affects editor state
-    // without this, editor looses focus and has undefined behavior
-    e.preventDefault()
-    // TODO: be able to fire an action wihtout sending editable state
-    dispatchEditor(onShowMenuActions(false, editableState))
-    dispatchEditor(startTag(tag, editableState))
+    //   // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
+    //   // TODO: make this compatable with native
+    //   // prevent default is needed for any button that affects editor state
+    //   // without this, editor looses focus and has undefined behavior
+    //   e.preventDefault()
+    //   // TODO: be able to fire an action wihtout sending editable state
+    //   dispatchEditor(onShowMenuActions(false, editableState))
+    //   dispatchEditor(startTag(tag, editableState))
   }
 
   useEffect(
     () => {
       if (showMenuActions) {
-        hideCursor(true)
+        //  hideCursor(true)
       } else {
-        hideCursor(false)
+        // hideCursor(false)
       }
     },
-    [showMenuActions]
+    []
+    // [showMenuActions]
   )
 
   const menuActions = [
@@ -76,7 +84,7 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
     </Button>
   ))
 
-  return isVisible ? (
+  return showButton ? (
     <Grid singleRow columnGap="small" position="absolute">
       <View
         height={editorMarginMenuItemHeight}
@@ -99,8 +107,9 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
         {showMenuActions && (
           <EditorBlockMenuActions
-            unmount={() =>
-              dispatchEditor(onShowMenuActions(false, editableState))
+            unmount={
+              () => null
+              //   dispatchEditor(onShowMenuActions(false, editableState))
             }
             menuActionButtons={menuActionButtons}
           />
