@@ -1,7 +1,5 @@
 import { isKeyHotkey } from 'is-hotkey'
-// import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 import { IS_LINUX, IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
-
 export const metaKey = IS_LINUX ? 'alt' : 'mod'
 export const START_OF_LINE = 'START_OF_LINE'
 export const END_OF_LINE = 'END_OF_LINE'

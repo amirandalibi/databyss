@@ -2,7 +2,6 @@ import React from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { toggleMark, startTag } from '../state/page/actions'
 import HoveringToolbar from './../HoveringToolbar'
 import { useSlate } from 'slate-react'
 import { Editor } from 'slate'
@@ -33,7 +32,7 @@ const desktopActions = [
     type: 'location',
     label: 'loc',
     variant: 'uiTextNormal',
-    action: a => toggleMark(a),
+    action: a => console.log(a),
   },
 ]
 
@@ -99,7 +98,6 @@ const isFormatActive = (editor, format) => {
 
 const MarkButton = ({ type, label, variant, action, ...others }) => {
   const editor = useSlate()
-  console.log('type', type)
   const isActive = isFormatActive(editor, type)
 
   return (

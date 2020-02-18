@@ -1,9 +1,8 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { createEditor, Transforms, Editor } from 'slate'
-import { View, RawHtml, Text } from '@databyss-org/ui/primitives'
+import React from 'react'
+import { Transforms, Editor } from 'slate'
+import { View } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup } from './markup'
-
-import { serialize, atomicHTMLSerializer } from './inlineSerializer'
+import { serialize } from './inlineSerializer'
 
 export const isAtomicInlineType = type => {
   switch (type) {
@@ -23,37 +22,13 @@ export const entities = type =>
 convert page state to a slate value
 */
 
-// children: [
-//   {
-//     type: 'paragraph',
-//     children: [
-//       { text: 'An opening paragraph with a ' },
-//       {
-//         type: 'link',
-//         url: 'https://example.com',
-//         children: [{ text: 'link' }],
-//       },
-//       { text: ' in it.' },
-//     ],
-//   },
-//   {
-//     type: 'quote',
-//     children: [{ text: 'A wise quote.' }],
-//   },
-//   {
-//     type: 'paragraph',
-//     children: [{ text: 'A closing paragraph!' }],
-//   },
-// ],
-
 export const stateToSlate = initState => {
   const _blocks = initState.page.blocks
   const _state = _blocks.map(b => {
     // get block ref and id
     const _block = initState.blocks[b._id]
-    // const _text = initState[entities(_block.type)][_block.refId].textValue
-    // get block text value and
     const _blockData = initState[entities(_block.type)][_block.refId]
+
     // convert state to apply markup values
     let _childrenText = stateToSlateMarkup(_blockData)
     const __childrenText = _childrenText[0].children.map(c => {
@@ -113,7 +88,9 @@ export const Leaf = ({ attributes, children, leaf }) => {
   )
 }
 
-const toggleBlock = (editor, format) => {
+// TODO: THIS FUNCTION IS NOT USED
+// USE THIS AS A REFRENCE TO TOGGLE A BLOCK MARK
+export const toggleBlock = (editor, format) => {
   const isActive = isBlockActive(editor, format)
   const isList = LIST_TYPES.includes(format)
 

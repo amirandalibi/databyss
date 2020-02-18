@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
-
 import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 import fonts from '@databyss-org/ui/theming/fonts'
 import styled from '@emotion/styled'
 import { color, border, space, typography, layout } from 'styled-system'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { createEditor, Transforms, Editor, Node, Range } from 'slate'
+import { Node, Range } from 'slate'
 
 import { isAtomicInlineType } from './slate/slateUtils'
 import { useSelected, ReactEditor, useEditor } from 'slate-react'

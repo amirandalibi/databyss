@@ -1,16 +1,11 @@
 import React, { useEffect } from 'react'
-import { useSelected } from 'slate-react'
-
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
 import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
-import { createEditor, Transforms, Editor, Node } from 'slate'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import EditorBlockMenuActions from './EditorBlockMenuActions'
-import { useEditorContext } from '../EditorProvider'
-import { startTag, onShowMenuActions } from '../state/page/actions'
 
 const EditorBlockMenu = ({ showButton }) => {
   let showMenuActions = false
