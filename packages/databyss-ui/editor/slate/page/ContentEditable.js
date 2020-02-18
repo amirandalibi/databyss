@@ -12,8 +12,6 @@ import { Element } from './../../EditorBlock'
 import FormatMenu from './../../Menu/FormatMenu'
 import hotKeys from './../hotKeys'
 
-import _ContentEditable from './_ContentEditable.js'
-
 const ContentEditable = () => {
   const withInline = editor => {
     const { isInline, isVoid } = editor
