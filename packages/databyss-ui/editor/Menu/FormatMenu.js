@@ -2,28 +2,29 @@ import React from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import EditorTooltip from '../EditorTooltip'
-import { useEditorContext } from '../EditorProvider'
 import { toggleMark, startTag } from '../state/page/actions'
+import HoveringToolbar from './../HoveringToolbar'
+import { useSlate } from 'slate-react'
+import { Editor } from 'slate'
 
 const mobileActions = [
   {
     type: 'SOURCE',
     label: '+ source',
     variant: 'uiTextNormal',
-    action: a => startTag(a),
+    action: a => console.log(a),
   },
   {
     type: 'TOPIC',
     label: '+ topic',
     variant: 'uiTextNormal',
-    action: a => startTag(a),
+    action: a => console.log(a),
   },
   {
     type: 'LOCATION',
     label: '+ location',
     variant: 'uiTextNormal',
-    action: a => startTag(a),
+    action: a => console.log(a),
   },
 ]
 
@@ -55,15 +56,18 @@ const formatActions = isMobileNewLine => [
   },
 ]
 
-const formatActionButtons = editor =>
-  editor.value.anchorBlock
-    ? formatActions(!editor.value.anchorBlock.text.length).reduce(
+const formatActionButtons = () =>
+  // editor.value.anchorBlock
+  true
+    ? //TODO: ASK ABOUT THIS COMMENT
+      formatActions(true).reduce(
+        //(!editor.value.anchorBlock.text.length).reduce(
         (acc, a, i) => {
           if (a.type === 'DIVIDER') {
             return acc.concat(
               <View
                 key={i}
-                borderRightColor="border.2"
+                borderRightColor="border.1"
                 borderRightWidth={pxUnits(1)}
                 marginLeft="extraSmall"
                 marginRight="extraSmall"
@@ -73,7 +77,6 @@ const formatActionButtons = editor =>
           return acc.concat(
             <MarkButton
               key={i}
-              editor={editor}
               index={i}
               type={a.type}
               label={a.label}
@@ -86,10 +89,18 @@ const formatActionButtons = editor =>
       )
     : []
 
-const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
-  const [, dispatchEditor] = useEditorContext()
-  const { value } = editor
-  const isActive = value.activeMarks.some(mark => mark.type === type)
+const isFormatActive = (editor, format) => {
+  const [match] = Editor.nodes(editor, {
+    match: n => n[format] === true,
+    mode: 'all',
+  })
+  return !!match
+}
+
+const MarkButton = ({ type, label, variant, action, ...others }) => {
+  const editor = useSlate()
+  console.log('type', type)
+  const isActive = isFormatActive(editor, type)
 
   return (
     <Button
@@ -97,7 +108,7 @@ const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
       variant="formatButton"
       onMouseDown={e => {
         e.preventDefault()
-        dispatchEditor(action(type, { value }))
+        console.log('dispatch action', type)
       }}
       {...others}
     >
@@ -113,8 +124,8 @@ const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   )
 }
 
-const FormatMenu = ({ editor }) => (
-  <EditorTooltip editor={editor}>{formatActionButtons(editor)}</EditorTooltip>
+const FormatMenu = () => (
+  <HoveringToolbar>{formatActionButtons()}</HoveringToolbar>
 )
 
 export default FormatMenu

@@ -12,38 +12,18 @@ import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
 import { startTag, onShowMenuActions } from '../state/page/actions'
 
-const EditorBlockMenu = ({ node, hideCursor, element, showButton }) => {
-  console.log(showButton)
-  //  console.log(string)
-  // console.log(Node.string(element))
-  // const [editorState, dispatchEditor] = useEditorContext()
-  // const {
-  //   activeBlockId,
-  //   showMenuActions,
-  //   editableState,
-  //   showFormatMenu,
-  // } = editorState
-  // let isVisible = showButton
-  // if (node.key === activeBlockId && !showFormatMenu) {
-  //   isVisible = true
-  // }
+const EditorBlockMenu = ({ showButton }) => {
   let showMenuActions = false
 
   const { buttonVariants } = buttons
 
   const onShowActions = () => {
-    // dispatchEditor(onShowMenuActions(!showMenuActions, editableState))
+    console.log('show actions')
   }
 
   const onMenuAction = (tag, e) => {
     //   // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
-    //   // TODO: make this compatable with native
-    //   // prevent default is needed for any button that affects editor state
-    //   // without this, editor looses focus and has undefined behavior
-    //   e.preventDefault()
-    //   // TODO: be able to fire an action wihtout sending editable state
-    //   dispatchEditor(onShowMenuActions(false, editableState))
-    //   dispatchEditor(startTag(tag, editableState))
+    console.log('click on', tag)
   }
 
   useEffect(

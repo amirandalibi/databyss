@@ -9,6 +9,8 @@ import {
   isAtomicInlineType,
 } from './../slateUtils'
 import { Element } from './../../EditorBlock'
+import HoveringToolbar from './../../HoveringToolbar'
+import FormatMenu from './../../Menu/FormatMenu'
 import hotKeys from './../hotKeys'
 
 import _ContentEditable from './_ContentEditable.js'
@@ -54,6 +56,7 @@ const ContentEditable = () => {
 
   return (
     <Slate editor={editor} value={value} onChange={value => setValue(value)}>
+      <FormatMenu />
       <Editable
         onKeyDown={onKeyDown}
         renderElement={renderElement}
