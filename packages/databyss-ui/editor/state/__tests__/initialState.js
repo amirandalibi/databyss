@@ -2,6 +2,7 @@ export const _initialState = {
   showMenuActions: false,
   showFormatMenu: false,
   showNewBlockMenu: true,
+  offset: null,
   activeBlockId: '5e48cdc1dbce857f65e4662d',
   newEntities: [], // renamed from `newAtomics`
   entityCache: {

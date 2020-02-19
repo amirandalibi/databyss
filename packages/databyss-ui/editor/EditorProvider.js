@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { onSetActiveBlockId } from './state/page/actions'
+import { onSetActiveBlockId, onSetOffset } from './state/page/actions'
 
 export pageReducer from './state/page/reducer'
 export lineReducer from './state/line/reducer'
@@ -28,7 +28,10 @@ const EditorProvider = ({ children, initialState, reducer }) => {
 
   const setActiveBlockId = id => {
     dispatch(onSetActiveBlockId(id))
-    // console.log('reducer test response')
+  }
+
+  const setOffset = offset => {
+    dispatch(onSetOffset(offset))
   }
 
   return (
@@ -36,6 +39,7 @@ const EditorProvider = ({ children, initialState, reducer }) => {
       value={{
         state,
         setActiveBlockId,
+        setOffset,
       }}
     >
       {children}

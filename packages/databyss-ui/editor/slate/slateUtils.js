@@ -29,7 +29,7 @@ export const stateToSlate = initState => {
     const _block = initState.blockCache[b._id]
     const _blockData = initState.entityCache[_block.entityId]
 
-    // convert state to apply markup values
+    // convert state and apply markup values
     let _childrenText = stateToSlateMarkup(_blockData.text)
     const __childrenText = _childrenText[0].children.map(c => {
       if (!c.type) {
@@ -49,9 +49,11 @@ export const stateToSlate = initState => {
           { text: '' },
         ]
       : _childrenText
+
     const _data = {
       children: _children,
       isBlock: true,
+      key: _block.entityId,
     }
     return _data
   })

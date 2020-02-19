@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useCallback } from 'react'
-import { createEditor } from 'slate'
+import React, { useMemo, useState, useCallback, useEffect } from 'react'
+import { createEditor, Range, Node, Editor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import { useEditorContext } from './../../EditorProvider'
 import initialState, {
@@ -17,8 +17,7 @@ import FormatMenu from './../../Menu/FormatMenu'
 import hotKeys from './../hotKeys'
 
 const ContentEditable = () => {
-  const { state, setActiveBlockId } = useEditorContext()
-  console.log(state)
+  const { state, setActiveBlockId, setOffset } = useEditorContext()
 
   const withInline = editor => {
     const { isInline, isVoid } = editor
@@ -41,25 +40,58 @@ const ContentEditable = () => {
     return <Leaf {...props} />
   }, [])
 
+  const onSelect = () => {
+    checkActiveBlockChange()
+    checkCaretOffset()
+  }
+
   const onKeyDown = event => {
-    if (hotKeys.isBold(event)) {
-      event.preventDefault()
-      toggleMark(editor, 'bold')
+    event.preventDefault()
+    // if (hotKeys.isBold(event)) {
+    //   event.preventDefault()
+    //   toggleMark(editor, 'bold')
+    // }
+    // if (hotKeys.isItalic(event)) {
+    //   event.preventDefault()
+    //   toggleMark(editor, 'italic')
+    // }
+    // if (hotKeys.isLocation(event)) {
+    //   event.preventDefault()
+    //   toggleMark(editor, 'location')
+    // }
+  }
+
+  // check if active block matches current block
+  const checkActiveBlockChange = () => {
+    if (editor.selection && Range.isCollapsed(editor.selection)) {
+      // get current selection key
+      const _path = editor.selection.anchor.path
+      const _key = Editor.node(editor, [_path[0]])[0].key
+      // update if different from state value
+      if (state.activeBlockId !== _key) {
+        setActiveBlockId(_key)
+      }
     }
-    if (hotKeys.isItalic(event)) {
-      event.preventDefault()
-      toggleMark(editor, 'italic')
-    }
-    if (hotKeys.isLocation(event)) {
-      event.preventDefault()
-      toggleMark(editor, 'location')
+  }
+
+  // get caret offset on select
+  const checkCaretOffset = () => {
+    if (editor.selection && Range.isCollapsed(editor.selection)) {
+      // get current offset
+      const _offset = editor.selection.anchor.offset
+      if (state.offset !== _offset) {
+        setOffset(_offset)
+      }
+    } else {
+      console.log('selection ')
     }
   }
 
   return (
-    <Slate editor={editor} value={value} onChange={value => setValue(value)}>
+    <Slate editor={editor} value={value} onChange={value => null}>
       <FormatMenu />
       <Editable
+        onSelect={onSelect}
         onKeyDown={onKeyDown}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
