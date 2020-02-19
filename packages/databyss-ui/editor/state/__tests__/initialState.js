@@ -1,91 +1,68 @@
-export default {
-  editableState: null,
-  activeBlockId: null,
-  newSources: [],
-  newTopics: [],
-  sources: {
-    '5d64419f1cbc815583c35058': {
-      _id: '5d64419f1cbc815583c35058',
-      textValue:
-        'Stamenov, Language Structure, Discourse and the Access to Consciousness',
-      ranges: [
-        { offset: 3, length: 2, marks: 'italic' },
-        { offset: 0, length: 2, marks: 'bold' },
-      ],
-    },
-  },
-  entries: {
-    '5d6442046e84d304ddceb768': {
-      _id: '5d6442046e84d304ddceb768',
-      textValue: 'On the limitation of third-order thought to assertion',
-      ranges: [
-        { offset: 0, length: 2, marks: 'bold' },
-        { offset: 1, length: 6, marks: 'italic' },
-      ],
-    },
-    '5d7bbfb58a5f2f5dc1edfe7d': {
-      _id: '5d7bbfb58a5f2f5dc1edfe7d',
-      textValue: '',
-      ranges: [],
-    },
-    '5d7bbfb58a5f2f5dc1edfe7e': {
-      _id: '5d7bbfb58a5f2f5dc1edfe7e',
-      textValue: '',
-      ranges: [],
-    },
-  },
-  topics: {
-    '5d7bbfb58a5f2f5dc1edfe7c': {
-      _id: '5d7bbfb58a5f2f5dc1edfe7c',
-      textValue: 'topic',
-      ranges: [],
-    },
-  },
-  locations: {},
-  blocks: {
-    '5d64423aae2da21680dc208b': {
+export const _initialState = {
+  showMenuActions: false,
+  showFormatMenu: false,
+  showNewBlockMenu: true,
+  activeBlockId: '5e48cdc1dbce857f65e4662d',
+  newEntities: [], // renamed from `newAtomics`
+  entityCache: {
+    '5e3b2000fda293001813b1d6': {
       type: 'SOURCE',
-      _id: '5d64423aae2da21680dc208b',
-      refId: '5d64419f1cbc815583c35058',
+      _id: '5e3b2000fda293001813b1d6',
+      text: {
+        textValue:
+          'Stamenov, Language Structure, Discourse and the Access to Consciousness',
+        ranges: [
+          { offset: 3, length: 2, mark: 'italic' },
+          { offset: 0, length: 2, mark: 'bold' },
+        ],
+      },
     },
-    '5d64424bcfa313f70483c1b0': {
+    '5e3f829ce5447c0018baebed': {
       type: 'ENTRY',
-      _id: '5d64424bcfa313f70483c1b0',
-      refId: '5d6442046e84d304ddceb768',
+      _id: '5e3f829ce5447c0018baebed',
+      text: {
+        textValue: 'On the limitation of third-order thought to assertion',
+        ranges: [
+          {
+            offset: 7,
+            length: 10,
+            mark: 'bold',
+          },
+        ],
+      },
     },
-    '5d64424bcfa313f70483c1b1': {
-      type: 'ENTRY',
-      _id: '5d64424bcfa313f70483c1b1',
-      refId: '5d7bbfb58a5f2f5dc1edfe7d',
-    },
-    '5d64424bcfa313f70483c1b2': {
-      type: 'ENTRY',
-      _id: '5d64424bcfa313f70483c1b2',
-      refId: '5d7bbfb58a5f2f5dc1edfe7e',
-    },
-    '5d7bbf85b5bf4165a5826720': {
+    '5e3b1bc48fb28680fe26437d': {
       type: 'TOPIC',
-      _id: '5d7bbf85b5bf4165a5826720',
-      refId: '5d7bbfb58a5f2f5dc1edfe7c',
+      _id: '5e3b1bc48fb28680fe26437d',
+      text: {
+        textValue: 'Some topic',
+        ranges: [],
+      },
     },
   },
-  page: {
-    _id: '5d6443bdd9ca9149d1a346c2',
-    name: 'pauls document',
-    blocks: [
-      {
-        _id: '5d64423aae2da21680dc208b',
-      },
-      {
-        _id: '5d64424bcfa313f70483c1b0',
-      },
-      {
-        _id: '5d7bbf85b5bf4165a5826720',
-      },
-      {
-        _id: '5d64424bcfa313f70483c1b1',
-      },
-      { _id: '5d64424bcfa313f70483c1b2' },
-    ],
+  blockCache: {
+    '5e48cdc1dbce857f65e46627': {
+      type: 'SOURCE',
+      entityId: '5e3b2000fda293001813b1d6',
+    },
+    '5e48cdc1dbce857f65e4662d': {
+      type: 'ENTRY',
+      entityId: '5e3f829ce5447c0018baebed',
+    },
+    '5e36ff96b21e9400186c3125': {
+      type: 'TOPIC',
+      entityId: '5e3b1bc48fb28680fe26437d',
+    },
   },
+  blocks: [
+    {
+      _id: '5e48cdc1dbce857f65e46627',
+    },
+    {
+      _id: '5e48cdc1dbce857f65e4662d',
+    },
+    {
+      _id: '5e36ff96b21e9400186c3125',
+    },
+  ],
 }

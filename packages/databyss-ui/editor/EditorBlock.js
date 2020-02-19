@@ -116,7 +116,7 @@ export const Element = ({ attributes, children, element }) => {
           </Span>
         ) : (
           // TODO: CHANGE THIS TO VIEW WITHOUT SLATE ERRORS
-          <div {...attributes}>{children}</div>
+          <Text {...attributes}>{children}</Text>
         )}
       </Span>
     )

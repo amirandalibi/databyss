@@ -23,14 +23,14 @@ convert page state to a slate value
 */
 
 export const stateToSlate = initState => {
-  const _blocks = initState.page.blocks
+  const _blocks = initState.blocks
   const _state = _blocks.map(b => {
     // get block ref and id
-    const _block = initState.blocks[b._id]
-    const _blockData = initState[entities(_block.type)][_block.refId]
+    const _block = initState.blockCache[b._id]
+    const _blockData = initState.entityCache[_block.entityId]
 
     // convert state to apply markup values
-    let _childrenText = stateToSlateMarkup(_blockData)
+    let _childrenText = stateToSlateMarkup(_blockData.text)
     const __childrenText = _childrenText[0].children.map(c => {
       if (!c.type) {
         return c

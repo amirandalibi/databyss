@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import {
   variant,
   color,
@@ -40,13 +40,13 @@ const Styled = styled(
   )
 )
 
-const Text = ({ children, color, ...others }) => {
+const Text = forwardRef(({ children, color, ...others }, ref) => {
   return (
-    <Styled variant="bodyNormal" color={color} {...others}>
+    <Styled ref={ref} variant="bodyNormal" color={color} {...others}>
       {children}
     </Styled>
   )
-}
+})
 
 Text.defaultProps = {
   color: 'text.0',

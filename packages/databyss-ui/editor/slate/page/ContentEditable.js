@@ -1,9 +1,12 @@
 import React, { useMemo, useState, useCallback } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
-import initialState from './../../state/__tests__/initialState.js'
+import initialState, {
+  _initialState,
+} from './../../state/__tests__/initialState.js'
 import {
   stateToSlate,
+  _stateToSlate,
   Leaf,
   toggleMark,
   isAtomicInlineType,
@@ -26,7 +29,8 @@ const ContentEditable = () => {
 
   const editor = useMemo(() => withInline(withReact(createEditor())), [])
 
-  const [value, setValue] = useState(stateToSlate(initialState))
+  const [value, setValue] = useState(stateToSlate(_initialState))
+  console.log(stateToSlate(_initialState))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
 

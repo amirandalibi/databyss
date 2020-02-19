@@ -33,7 +33,7 @@ export const stateToSlateMarkup = blockData => {
     // add type to be used for html seralizer in atomic blocks
     Transforms.setNodes(
       _editor,
-      { [range.marks]: true, type: range.marks },
+      { [range.mark]: true, type: range.mark },
       {
         at: _range,
         match: node => Text.isText(node),
