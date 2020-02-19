@@ -31,7 +31,8 @@ import {
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children, autoFocus }) => {
-  // const [editorState, dispatchEditor] = useEditorContext()
+  const { setActiveBlockId } = useEditorContext()
+  // setActiveBlockId('something')
   // const { setSource, state: sourceState } = useSourceContext()
   // const { setTopic, state: topicState } = useTopicContext()
 

@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
+import { useEditorContext } from './../../EditorProvider'
 import initialState, {
   _initialState,
 } from './../../state/__tests__/initialState.js'
@@ -16,6 +17,9 @@ import FormatMenu from './../../Menu/FormatMenu'
 import hotKeys from './../hotKeys'
 
 const ContentEditable = () => {
+  const { state, setActiveBlockId } = useEditorContext()
+  console.log(state)
+
   const withInline = editor => {
     const { isInline, isVoid } = editor
     editor.isInline = element => {
@@ -29,7 +33,7 @@ const ContentEditable = () => {
 
   const editor = useMemo(() => withInline(withReact(createEditor())), [])
 
-  const [value, setValue] = useState(stateToSlate(_initialState))
+  const [value, setValue] = useState(stateToSlate(state))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
 

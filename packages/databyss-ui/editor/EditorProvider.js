@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { onSetActiveBlockId } from './state/page/actions'
 
 export pageReducer from './state/page/reducer'
 export lineReducer from './state/line/reducer'
@@ -23,14 +24,22 @@ export const makeComposedReducer = (reducer, editableReducer) => (
 })
 
 const EditorProvider = ({ children, initialState, reducer }) => {
-  const [state, dispatch, stateRef] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-  const test = () => {
-    console.log('reducer test response')
+  const setActiveBlockId = id => {
+    dispatch(onSetActiveBlockId(id))
+    // console.log('reducer test response')
   }
 
   return (
-    <EditorContext.Provider value={{ test }}>{children}</EditorContext.Provider>
+    <EditorContext.Provider
+      value={{
+        state,
+        setActiveBlockId,
+      }}
+    >
+      {children}
+    </EditorContext.Provider>
   )
 }
 
