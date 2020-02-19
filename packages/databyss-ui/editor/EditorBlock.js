@@ -73,7 +73,7 @@ export const Element = ({ attributes, children, element }) => {
 
   const _Element = () => {
     return (
-      <Span id="grid" pt="small" pb="small">
+      <Span pt="small" pb="small">
         {/* add sidebar button here */}
         {element.isBlock && (
           <View
@@ -81,17 +81,19 @@ export const Element = ({ attributes, children, element }) => {
             contentEditable="false"
             mt="extraSmall"
             mb="extraSmall"
+            readOnly
             suppressContentEditableWarning
             left="-30px"
             top="0px"
           >
+            &zwnj;
             <EditorBlockMenu element={element} showButton={showNewBlockMenu} />
+            &zwnj;
           </View>
         )}
         {isAtomicInlineType(element.type) ? (
           <Span
             flexWrap="nowrap"
-            id="atomic"
             display="inline"
             contentEditable="false"
             suppressContentEditableWarning

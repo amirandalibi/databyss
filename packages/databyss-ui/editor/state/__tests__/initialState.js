@@ -31,6 +31,14 @@ export const _initialState = {
         ],
       },
     },
+    '5e3f829ce5447c0018baebee': {
+      type: 'ENTRY',
+      _id: '5e3f829ce5447c0018baebed',
+      text: {
+        textValue: '',
+        ranges: [],
+      },
+    },
     '5e3b1bc48fb28680fe26437d': {
       type: 'TOPIC',
       _id: '5e3b1bc48fb28680fe26437d',
@@ -53,6 +61,10 @@ export const _initialState = {
       type: 'TOPIC',
       entityId: '5e3b1bc48fb28680fe26437d',
     },
+    '5e36ff96b21e9400186c3126': {
+      type: 'ENTRY',
+      entityId: '5e3f829ce5447c0018baebee',
+    },
   },
   blocks: [
     {
@@ -63,6 +75,9 @@ export const _initialState = {
     },
     {
       _id: '5e36ff96b21e9400186c3125',
+    },
+    {
+      _id: '5e36ff96b21e9400186c3126',
     },
   ],
 }

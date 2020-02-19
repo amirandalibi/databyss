@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
-export { default as pageReducer } from './state/page/reducer'
-export { default as lineReducer } from './state/line/reducer'
+export pageReducer from './state/page/reducer'
+export lineReducer from './state/line/reducer'
 
 const useReducer = createReducer()
 
@@ -22,23 +22,15 @@ export const makeComposedReducer = (reducer, editableReducer) => (
   ),
 })
 
-const EditorProvider = ({
-  children,
-  initialState,
-  editableReducer,
-  name,
-  reducer,
-}) => {
-  const [state, dispatch, stateRef] = useReducer(
-    makeComposedReducer(reducer, editableReducer),
-    initialState,
-    { name: `EditorProvider ${name ? `(${name})` : ''}` }
-  )
+const EditorProvider = ({ children, initialState, reducer }) => {
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState)
+
+  const test = () => {
+    console.log('reducer test response')
+  }
 
   return (
-    <EditorContext.Provider value={[state, dispatch, stateRef]}>
-      {children}
-    </EditorContext.Provider>
+    <EditorContext.Provider value={{ test }}>{children}</EditorContext.Provider>
   )
 }
 
