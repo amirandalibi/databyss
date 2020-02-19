@@ -83,7 +83,7 @@ export const Leaf = ({ attributes, children, leaf }) => {
 
   if (leaf.type == 'spacer') {
     return (
-      <Text display="inline" variant="bodyHeader">
+      <Text display="inline" {...attributes} variant="bodyHeader">
         {children}
       </Text>
     )

@@ -80,15 +80,16 @@ export const Element = ({ attributes, children, element }) => {
             position="relative"
             contentEditable="false"
             mt="extraSmall"
+            display="inline-block"
+            readonly
             mb="extraSmall"
-            readOnly
+            id="bug-test"
+            height="0px"
             suppressContentEditableWarning
             left="-30px"
-            top="0px"
+            top="small"
           >
-            &zwnj;
             <EditorBlockMenu element={element} showButton={showNewBlockMenu} />
-            &zwnj;
           </View>
         )}
         {isAtomicInlineType(element.type) ? (
