@@ -1,6 +1,6 @@
 import React from 'react'
 import { Transforms, Editor } from 'slate'
-import { View } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup } from './markup'
 import { serialize } from './inlineSerializer'
 
@@ -40,7 +40,7 @@ export const stateToSlate = initState => {
 
     const _children = isAtomicInlineType(_block.type)
       ? [
-          { text: '' },
+          { text: '', type: 'spacer' },
           {
             character: serialize({ children: __childrenText }),
             type: _block.type,
@@ -78,6 +78,14 @@ export const Leaf = ({ attributes, children, leaf }) => {
       >
         {children}
       </View>
+    )
+  }
+
+  if (leaf.type == 'spacer') {
+    return (
+      <Text display="inline" variant="bodyHeader">
+        {children}
+      </Text>
     )
   }
 

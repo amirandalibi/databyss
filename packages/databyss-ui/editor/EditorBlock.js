@@ -103,7 +103,7 @@ export const Element = ({ attributes, children, element }) => {
             pl="tiny"
             pr="0"
             pt="tiny"
-            pb="extraSmall"
+            pb="tiny"
             mb="tiny"
             mt="small"
             ml="tinyNegative"
