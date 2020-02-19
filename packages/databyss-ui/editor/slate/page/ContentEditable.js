@@ -30,7 +30,6 @@ const ContentEditable = () => {
   const editor = useMemo(() => withInline(withReact(createEditor())), [])
 
   const [value, setValue] = useState(stateToSlate(_initialState))
-  console.log(stateToSlate(_initialState))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
 
