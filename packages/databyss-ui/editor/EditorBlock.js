@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import {
+  RawHtml,
+  Text,
+  Button,
+  Icon,
+  View,
+  Grid,
+} from '@databyss-org/ui/primitives'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 import fonts from '@databyss-org/ui/theming/fonts'
 import styled from '@emotion/styled'
@@ -66,12 +73,14 @@ export const Element = ({ attributes, children, element }) => {
 
   const _Element = () => {
     return (
-      <Span>
+      <Span id="grid" pt="small" pb="small">
         {/* add sidebar button here */}
         {element.isBlock && (
           <View
             position="relative"
             contentEditable="false"
+            mt="extraSmall"
+            mb="extraSmall"
             suppressContentEditableWarning
             left="-30px"
             top="0px"
@@ -82,7 +91,8 @@ export const Element = ({ attributes, children, element }) => {
         {isAtomicInlineType(element.type) ? (
           <Span
             flexWrap="nowrap"
-            display="inline-block"
+            id="atomic"
+            display="inline"
             contentEditable="false"
             suppressContentEditableWarning
             css={{ userSelect: 'none', cursor: 'pointer' }}
@@ -90,8 +100,12 @@ export const Element = ({ attributes, children, element }) => {
             borderRadius={5}
             onMouseDown={onClick}
             fontSize={fonts.textVariants.bodyHeader.fontSize}
-            p="tiny"
+            pl="tiny"
             pr="0"
+            pt="tiny"
+            pb="extraSmall"
+            mb="tiny"
+            mt="small"
             ml="tinyNegative"
             backgroundColor={isSelected ? 'background.3' : ''}
           >
