@@ -1,6 +1,10 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { onSetActiveBlockId, onSetOffset } from './state/page/actions'
+import {
+  onSetActiveBlockId,
+  onSetOffset,
+  onCharPress,
+} from './state/page/actions'
 
 export pageReducer from './state/page/reducer'
 export lineReducer from './state/line/reducer'
@@ -34,12 +38,17 @@ const EditorProvider = ({ children, initialState, reducer }) => {
     dispatch(onSetOffset(offset))
   }
 
+  const characterPress = char => {
+    dispatch(onCharPress(char))
+  }
+
   return (
     <EditorContext.Provider
       value={{
         state,
         setActiveBlockId,
         setOffset,
+        characterPress,
       }}
     >
       {children}

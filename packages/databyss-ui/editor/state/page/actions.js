@@ -1,4 +1,4 @@
-import { SET_ACTIVE_BLOCK_ID, SET_OFFSET } from './constants'
+import { SET_ACTIVE_BLOCK_ID, SET_OFFSET, CHARACTER_PRESS } from './constants'
 
 export function onSetActiveBlockId(id) {
   return {
@@ -14,6 +14,15 @@ export function onSetOffset(offset) {
     type: SET_OFFSET,
     payload: {
       offset,
+    },
+  }
+}
+
+export function onCharPress(char) {
+  return {
+    type: CHARACTER_PRESS,
+    payload: {
+      char,
     },
   }
 }

@@ -40,8 +40,6 @@ const WINDOWS_HOTKEYS = {}
 const Hotkeys = {}
 const IS_APPLE = IS_IOS || IS_MAC
 
-console.log('is apple', IS_APPLE)
-
 const IS_WINDOWS = !IS_APPLE
 const KEYS = []
   .concat(Object.keys(HOTKEYS))

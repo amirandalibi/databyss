@@ -17,7 +17,12 @@ import FormatMenu from './../../Menu/FormatMenu'
 import hotKeys from './../hotKeys'
 
 const ContentEditable = () => {
-  const { state, setActiveBlockId, setOffset } = useEditorContext()
+  const {
+    state,
+    setActiveBlockId,
+    setOffset,
+    characterPress,
+  } = useEditorContext()
 
   const withInline = editor => {
     const { isInline, isVoid } = editor
@@ -40,13 +45,14 @@ const ContentEditable = () => {
     return <Leaf {...props} />
   }, [])
 
-  const onSelect = () => {
+  const onClick = () => {
     checkActiveBlockChange()
     checkCaretOffset()
   }
 
   const onKeyDown = event => {
     event.preventDefault()
+    characterPress(event.key)
     // if (hotKeys.isBold(event)) {
     //   event.preventDefault()
     //   toggleMark(editor, 'bold')
@@ -66,7 +72,8 @@ const ContentEditable = () => {
     if (editor.selection && Range.isCollapsed(editor.selection)) {
       // get current selection key
       const _path = editor.selection.anchor.path
-      const _key = Editor.node(editor, [_path[0]])[0].key
+      const _key = state.blocks[_path[0]]._id
+      // const _key = Editor.node(editor, [_path[0]])[0].key
       // update if different from state value
       if (state.activeBlockId !== _key) {
         setActiveBlockId(_key)
@@ -88,10 +95,11 @@ const ContentEditable = () => {
   }
 
   return (
-    <Slate editor={editor} value={value} onChange={value => null}>
+    <Slate editor={editor} value={stateToSlate(state)} onChange={value => null}>
       <FormatMenu />
       <Editable
-        onSelect={onSelect}
+        onClick={onClick}
+        //  onSelect={onSelect}
         onKeyDown={onKeyDown}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
