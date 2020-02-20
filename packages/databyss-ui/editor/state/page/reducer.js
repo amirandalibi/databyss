@@ -18,33 +18,38 @@ const setActiveBlockId = (state, id) => {
 
 const setOffset = (state, offset) => {
   const _state = cloneDeep(state)
-  _state.offset = offset
+  const _selection = _state.selection
+  const _index = _state.blocks.findIndex(b => b._id === _state.activeBlockId)
+  _selection.anchor = { blockIndex: _index, offset }
+  _selection.focus = { blockIndex: _index, offset }
+  _state.selection = _selection
   return _state
 }
 
 const setBlockContent = (state, char) => {
   // add character to offset position of active block
+  // this function assumes a range is not selected
+
   const { activeBlockId } = state
 
-  const _state = cloneDeep(state)
+  let _state = cloneDeep(state)
   if (activeBlockId) {
     const _id = _state.blockCache[activeBlockId].entityId
     const _text = _state.entityCache[_id].text
     let _textValue = _text.textValue
     // update the text value
     _textValue = _state.entityCache[_id].text.textValue.splice(
-      state.offset,
+      state.selection.anchor.offset,
       0,
       char
     )
     _state.entityCache[_id].text.textValue = _textValue
-    // update caret offset
-    console.log(_state.offset)
-    _state.offset = _state.offset + 1
-    console.log(_state.offset)
-  }
 
-  console.log(char)
+    // update caret offset
+
+    _state = setOffset(_state, _state.selection.anchor.offset + 1)
+    // TODO: UPDATE RANGES
+  }
   return _state
 }
 

@@ -1,16 +1,17 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
-import { createEditor, Range, Node, Editor } from 'slate'
+import { createEditor, Range, Node, Editor, Point } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import { useEditorContext } from './../../EditorProvider'
-import initialState, {
-  _initialState,
-} from './../../state/__tests__/initialState.js'
+import { _initialState } from './../../state/__tests__/initialState.js'
 import {
   stateToSlate,
   _stateToSlate,
   Leaf,
   toggleMark,
   isAtomicInlineType,
+  updateSlateSelection,
+  editorHasSelection,
+  getNodeOffset,
 } from './../slateUtils'
 import { Element } from './../../EditorBlock'
 import FormatMenu from './../../Menu/FormatMenu'
@@ -26,6 +27,7 @@ const ContentEditable = () => {
 
   const withInline = editor => {
     const { isInline, isVoid } = editor
+
     editor.isInline = element => {
       return isAtomicInlineType(element.type) ? true : isInline(element)
     }
@@ -36,8 +38,6 @@ const ContentEditable = () => {
   }
 
   const editor = useMemo(() => withInline(withReact(createEditor())), [])
-
-  const [value, setValue] = useState(stateToSlate(state))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
 
@@ -69,7 +69,7 @@ const ContentEditable = () => {
 
   // check if active block matches current block
   const checkActiveBlockChange = () => {
-    if (editor.selection && Range.isCollapsed(editor.selection)) {
+    if (editorHasSelection(editor)) {
       // get current selection key
       const _path = editor.selection.anchor.path
       const _key = state.blocks[_path[0]]._id
@@ -83,16 +83,20 @@ const ContentEditable = () => {
 
   // get caret offset on select
   const checkCaretOffset = () => {
-    if (editor.selection && Range.isCollapsed(editor.selection)) {
+    if (editorHasSelection(editor)) {
       // get current offset
-      const _offset = editor.selection.anchor.offset
-      if (state.offset !== _offset) {
+      const _offset = getNodeOffset(editor)
+
+      if (state.selection.anchor.offset !== _offset) {
         setOffset(_offset)
       }
     } else {
       console.log('selection ')
     }
   }
+
+  // check is selection needs to be updated from state offset
+  updateSlateSelection(state, editor)
 
   return (
     <Slate editor={editor} value={stateToSlate(state)} onChange={value => null}>

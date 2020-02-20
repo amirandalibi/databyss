@@ -1,8 +1,9 @@
 import React from 'react'
-import { Transforms, Editor } from 'slate'
+import { Transforms, Editor, Range, Node } from 'slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup } from './markup'
 import { serialize } from './inlineSerializer'
+import { _initialState } from '../state/__tests__/initialState'
 
 export const isAtomicInlineType = type => {
   switch (type) {
@@ -57,7 +58,67 @@ export const stateToSlate = initState => {
     }
     return _data
   })
+
   return _state
+}
+
+export const stateHasRange = state => {
+  if (state.activeBlockId && state.selection.anchor.offset) {
+    return true
+  }
+  return false
+}
+
+export const getNodeOffset = editor => {
+  if (editor.selection) {
+    const _anchor = {
+      path: [0, 0],
+      offset: 0,
+    }
+    const _focus = {
+      path: [
+        0,
+        editor.selection.anchor.path[2] || editor.selection.anchor.path[1],
+      ],
+      offset: editor.selection.anchor.offset,
+    }
+    const _range = { anchor: _anchor, focus: _focus }
+    const _frag = Node.fragment(
+      editor.children[editor.selection.anchor.path[0]],
+      _range
+    )
+    const _string = Node.string(_frag[0])
+    return _string.length
+  }
+  return
+}
+
+export const editorHasSelection = editor => {
+  if (editor.selection && Range.isCollapsed(editor.selection)) {
+    return true
+  }
+  return false
+}
+
+export const updateSlateSelection = (state, editor) => {
+  if (!stateHasRange(state)) {
+    return
+  }
+
+  if (state.selection.anchor.offset !== getNodeOffset(editor)) {
+    const _selection = {
+      anchor: {
+        path: [state.selection.anchor.blockIndex, 0],
+        offset: state.selection.anchor.offset,
+      },
+      focus: {
+        path: [state.selection.focus.blockIndex, 0],
+        offset: state.selection.focus.offset,
+      },
+    }
+    // update selection
+    Transforms.setSelection(editor, _selection)
+  }
 }
 
 export const Leaf = ({ attributes, children, leaf }) => {
