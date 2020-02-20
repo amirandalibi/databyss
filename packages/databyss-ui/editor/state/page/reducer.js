@@ -34,16 +34,20 @@ const setBlockContent = (state, char) => {
 
   let _state = cloneDeep(state)
   if (activeBlockId) {
-    const _id = _state.blockCache[activeBlockId].entityId
-    const _text = _state.entityCache[_id].text
+    const { entityId, type } = _state.blockCache[activeBlockId]
+    if (isAtomicInlineType(type)) {
+      return state
+    }
+
+    const _text = _state.entityCache[entityId].text
     let _textValue = _text.textValue
     // update the text value
-    _textValue = _state.entityCache[_id].text.textValue.splice(
+    _textValue = _state.entityCache[entityId].text.textValue.splice(
       state.selection.anchor.offset,
       0,
       char
     )
-    _state.entityCache[_id].text.textValue = _textValue
+    _state.entityCache[entityId].text.textValue = _textValue
 
     // update caret offset
 
