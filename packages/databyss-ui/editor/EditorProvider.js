@@ -5,6 +5,7 @@ import {
   onSetOffset,
   onCharPress,
   onArrowKeyPress,
+  onBackspaceKeyPress,
 } from './state/page/actions'
 
 export pageReducer from './state/page/reducer'
@@ -47,6 +48,10 @@ const EditorProvider = ({ children, initialState, reducer }) => {
     dispatch(onArrowKeyPress(key))
   }
 
+  const backspaceKeyPress = () => {
+    dispatch(onBackspaceKeyPress())
+  }
+
   return (
     <EditorContext.Provider
       value={{
@@ -55,6 +60,7 @@ const EditorProvider = ({ children, initialState, reducer }) => {
         setOffset,
         characterKeyPress,
         arrowKeyPress,
+        backspaceKeyPress,
       }}
     >
       {children}

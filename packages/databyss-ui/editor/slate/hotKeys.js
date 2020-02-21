@@ -31,6 +31,7 @@ const HOTKEYS = {
   esc: 'esc',
   arrowLeft: `ArrowLeft`,
   arrowRight: 'ArrowRight',
+  backspace: 'Backspace',
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}

@@ -24,6 +24,7 @@ const ContentEditable = () => {
     setOffset,
     characterKeyPress,
     arrowKeyPress,
+    backspaceKeyPress,
   } = useEditorContext()
 
   const withInline = editor => {
@@ -52,8 +53,14 @@ const ContentEditable = () => {
   }
 
   const onKeyDown = event => {
+    console.log(event.key)
     if (hotKeys.isArrowLeft(event) || hotKeys.isArrowRight(event)) {
       arrowKeyPress(event.key)
+      return event.preventDefault()
+    }
+
+    if (hotKeys.isBackspace(event)) {
+      backspaceKeyPress()
       return event.preventDefault()
     }
     // allows only alphanumeric characters'

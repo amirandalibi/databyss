@@ -9,6 +9,7 @@ import {
   SET_OFFSET,
   CHARACTER_PRESS,
   ARROW_KEY,
+  BACKSPACE,
 } from './constants'
 
 String.prototype.splice = function(idx, rem, str) {
@@ -22,6 +23,7 @@ const setActiveBlockId = (state, id) => {
 }
 
 const setOffset = (state, offset) => {
+  // TODO: WHEN CHARACTER IS SET OUT OF RANGE, UPDATE ACTIVE BLOCK ID AND SELECTION TO MOVE UP OR DOWN A BLOCK
   const _state = cloneDeep(state)
   const _selection = _state.selection
   const _index = _state.blocks.findIndex(b => b._id === _state.activeBlockId)
@@ -36,29 +38,31 @@ const setBlockContent = (state, char) => {
   // this function assumes a range is not selected
 
   const { activeBlockId } = state
+  if (!activeBlockId) {
+    return state
+  }
 
   let _state = cloneDeep(state)
-  if (activeBlockId) {
-    const { entityId, type } = _state.blockCache[activeBlockId]
-    if (isAtomicInlineType(type)) {
-      return state
-    }
-
-    const _text = _state.entityCache[entityId].text
-    let _textValue = _text.textValue
-    // update the text value
-    _textValue = _state.entityCache[entityId].text.textValue.splice(
-      state.selection.anchor.offset,
-      0,
-      char
-    )
-    _state.entityCache[entityId].text.textValue = _textValue
-
-    // update caret offset
-
-    _state = setOffset(_state, _state.selection.anchor.offset + 1)
-    // TODO: UPDATE RANGES
+  const { entityId, type } = _state.blockCache[activeBlockId]
+  if (isAtomicInlineType(type)) {
+    return state
   }
+
+  const _text = _state.entityCache[entityId].text
+  let _textValue = _text.textValue
+  // update the text value
+  _textValue = _state.entityCache[entityId].text.textValue.splice(
+    state.selection.anchor.offset,
+    0,
+    char
+  )
+  _state.entityCache[entityId].text.textValue = _textValue
+
+  // update caret offset
+
+  _state = setOffset(_state, _state.selection.anchor.offset + 1)
+  // TODO: UPDATE RANGES
+
   return _state
 }
 
@@ -76,6 +80,38 @@ const onArrowKeyPress = (state, key) => {
   return _state
 }
 
+const onBackspaceKeyPress = state => {
+  const { activeBlockId } = state
+  if (!activeBlockId) {
+    return state
+  }
+
+  let _state = cloneDeep(state)
+
+  const { entityId, type } = _state.blockCache[activeBlockId]
+  if (isAtomicInlineType(type)) {
+    // TODO DELETE ATOMIC
+    return state
+  }
+
+  const _text = _state.entityCache[entityId].text
+  let _textValue = _text.textValue
+  // update the text value
+  _textValue = _state.entityCache[entityId].text.textValue.splice(
+    state.selection.anchor.offset - 1,
+    1,
+    ''
+  )
+  _state.entityCache[entityId].text.textValue = _textValue
+
+  // TODO: DELETE RANGE
+
+  // update caret offset
+  _state = setOffset(_state, _state.selection.anchor.offset - 1)
+
+  return _state
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_ID:
@@ -86,6 +122,8 @@ export default (state, action) => {
       return setBlockContent(state, action.payload.char)
     case ARROW_KEY:
       return onArrowKeyPress(state, action.payload.key)
+    case BACKSPACE:
+      return onBackspaceKeyPress(state)
     default:
       return state
   }

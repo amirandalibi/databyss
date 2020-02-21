@@ -3,6 +3,7 @@ import {
   SET_OFFSET,
   CHARACTER_PRESS,
   ARROW_KEY,
+  BACKSPACE,
 } from './constants'
 
 export function onSetActiveBlockId(id) {
@@ -38,5 +39,11 @@ export function onArrowKeyPress(key) {
     payload: {
       key,
     },
+  }
+}
+
+export function onBackspaceKeyPress() {
+  return {
+    type: BACKSPACE,
   }
 }
