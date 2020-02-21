@@ -1,4 +1,9 @@
-import { SET_ACTIVE_BLOCK_ID, SET_OFFSET, CHARACTER_PRESS } from './constants'
+import {
+  SET_ACTIVE_BLOCK_ID,
+  SET_OFFSET,
+  CHARACTER_PRESS,
+  ARROW_KEY,
+} from './constants'
 
 export function onSetActiveBlockId(id) {
   return {
@@ -23,6 +28,15 @@ export function onCharPress(char) {
     type: CHARACTER_PRESS,
     payload: {
       char,
+    },
+  }
+}
+
+export function onArrowKeyPress(key) {
+  return {
+    type: ARROW_KEY,
+    payload: {
+      key,
     },
   }
 }

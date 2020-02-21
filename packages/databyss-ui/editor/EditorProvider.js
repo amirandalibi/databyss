@@ -4,6 +4,7 @@ import {
   onSetActiveBlockId,
   onSetOffset,
   onCharPress,
+  onArrowKeyPress,
 } from './state/page/actions'
 
 export pageReducer from './state/page/reducer'
@@ -38,8 +39,12 @@ const EditorProvider = ({ children, initialState, reducer }) => {
     dispatch(onSetOffset(offset))
   }
 
-  const characterPress = char => {
+  const characterKeyPress = char => {
     dispatch(onCharPress(char))
+  }
+
+  const arrowKeyPress = key => {
+    dispatch(onArrowKeyPress(key))
   }
 
   return (
@@ -48,7 +53,8 @@ const EditorProvider = ({ children, initialState, reducer }) => {
         state,
         setActiveBlockId,
         setOffset,
-        characterPress,
+        characterKeyPress,
+        arrowKeyPress,
       }}
     >
       {children}

@@ -22,7 +22,8 @@ const ContentEditable = () => {
     state,
     setActiveBlockId,
     setOffset,
-    characterPress,
+    characterKeyPress,
+    arrowKeyPress,
   } = useEditorContext()
 
   const withInline = editor => {
@@ -51,8 +52,20 @@ const ContentEditable = () => {
   }
 
   const onKeyDown = event => {
-    event.preventDefault()
-    characterPress(event.key)
+    if (hotKeys.isArrowLeft(event) || hotKeys.isArrowRight(event)) {
+      arrowKeyPress(event.key)
+      return event.preventDefault()
+    }
+    // allows only alphanumeric characters'
+    const _regEx = /[a-zA-Z0-9-_ ]/
+    const input = String.fromCharCode(event.keyCode)
+    if (_regEx.test(input)) {
+      characterKeyPress(event.key)
+      return event.preventDefault()
+    }
+
+    // let re = new RegExp('^([a-zA-Z0-9 _-]+)$')
+    // console.log(re)
     // if (hotKeys.isBold(event)) {
     //   event.preventDefault()
     //   toggleMark(editor, 'bold')

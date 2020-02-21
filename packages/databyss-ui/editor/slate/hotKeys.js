@@ -29,6 +29,8 @@ const HOTKEYS = {
   nextBlock: `ctrl+shift+p`,
   previousBlock: `ctrl+shift+o`,
   esc: 'esc',
+  arrowLeft: `ArrowLeft`,
+  arrowRight: 'ArrowRight',
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}

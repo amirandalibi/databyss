@@ -4,7 +4,12 @@ import invariant from 'invariant'
 
 import { isAtomicInlineType } from './../../slate/page/reducer'
 
-import { SET_ACTIVE_BLOCK_ID, SET_OFFSET, CHARACTER_PRESS } from './constants'
+import {
+  SET_ACTIVE_BLOCK_ID,
+  SET_OFFSET,
+  CHARACTER_PRESS,
+  ARROW_KEY,
+} from './constants'
 
 String.prototype.splice = function(idx, rem, str) {
   return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem))
@@ -57,6 +62,20 @@ const setBlockContent = (state, char) => {
   return _state
 }
 
+const onArrowKeyPress = (state, key) => {
+  let _state = cloneDeep(state)
+  switch (key) {
+    case 'ArrowRight':
+      _state = setOffset(_state, state.selection.anchor.offset + 1)
+      break
+    case 'ArrowLeft':
+      _state = setOffset(_state, state.selection.anchor.offset - 1)
+      break
+  }
+
+  return _state
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_ID:
@@ -65,6 +84,8 @@ export default (state, action) => {
       return setOffset(state, action.payload.offset)
     case CHARACTER_PRESS:
       return setBlockContent(state, action.payload.char)
+    case ARROW_KEY:
+      return onArrowKeyPress(state, action.payload.key)
     default:
       return state
   }
